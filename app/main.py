@@ -1,4 +1,6 @@
 import datetime
+from contextlib import asynccontextmanager
+
 from fastapi import Request
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -8,17 +10,18 @@ from app.database.database import engine
 from app.database.models import Base
 from fastapi.templating import Jinja2Templates
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
 app = FastAPI(
     title="Trading Platform API",
     description="Real-time Trading System with WebSocket Support",
     version="0.1.0",
     openapi_url="/api/openapi.json"
 )
-
-# Create table migration
-@app.on_event("startup")
-async def startup():
-    Base.metadata.create_all(bind=engine)
 
 # CORS Config
 app.add_middleware(

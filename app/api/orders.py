@@ -2,8 +2,7 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, validator
-from datetime import datetime
+from pydantic import BaseModel, field_validator
 from app.database.database import get_db
 from app.database.models import Order
 from app.enums import OrderStatus
@@ -18,13 +17,13 @@ class OrderCreate(BaseModel):
     quantity: int
     order_type: str
 
-    @validator('symbol')
+    @field_validator('symbol')
     def symbol_uppercase(cls, v):
         if not v.isupper():
             raise ValueError('Symbol must be uppercase')
         return v
 
-    @validator('order_type')
+    @field_validator('order_type')
     def validate_order_type(cls, v):
         if v not in ('limit', 'market'):
             raise ValueError('Invalid order type')
