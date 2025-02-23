@@ -8,12 +8,11 @@
     <script src="https://unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
-    <nav class="bg-blue-600 text-white shadow-lg">
+    <nav class="bg-violet-600 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex-shrink-0">
                     <span class="text-xl font-bold">TRADE</span>
-                    <span class="text-blue-200 ml-1">PRO</span>
                 </div>
             </div>
         </div>
@@ -50,7 +49,7 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <button type="button" onclick="setOrderType('limit')"
-                                class="order-type-btn bg-blue-600 text-white rounded-md py-2 px-4
+                                class="order-type-btn bg-violet-600 text-white rounded-md py-2 px-4
                                        hover:bg-blue-700 transition-colors">
                             Limit Order
                         </button>
@@ -62,7 +61,7 @@
                     </div>
 
                     <button type="submit"
-                            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md
+                            class="w-full bg-violet-600 text-white py-2 px-4 rounded-md
                                    hover:bg-blue-700 transition-colors">
                         Place Order
                     </button>
@@ -93,12 +92,12 @@
         // Order type selection
         function setOrderType(type) {
             document.querySelectorAll('.order-type-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white')
+                btn.classList.remove('bg-violet-600', 'text-white')
                 btn.classList.add('bg-gray-100', 'text-gray-800')
             })
             const target = event.currentTarget
             target.classList.remove('bg-gray-100', 'text-gray-800')
-            target.classList.add('bg-blue-600', 'text-white')
+            target.classList.add('bg-violet-600', 'text-white')
             document.querySelector('[name="order_type"]').value = type
         }
 
@@ -176,7 +175,7 @@
         // Notification system
         function showNotification(message, type = 'info') {
             const container = document.createElement('div')
-            container.className = `fixed top-4 right-4 p-4 rounded-lg border-l-4 ${
+            container.className = `fixed top-12 left-1/2 transform -translate-x-1/2 p-4 rounded-lg border-l-4 ${
                 type === 'success' ? 'bg-green-100 border-green-500 text-green-700' :
                 type === 'error' ? 'bg-red-100 border-red-500 text-red-700' :
                 'bg-blue-100 border-blue-500 text-blue-700'
