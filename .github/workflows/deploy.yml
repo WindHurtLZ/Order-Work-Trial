@@ -54,6 +54,7 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+# I clean the database every time for work trail
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} "
@@ -61,7 +62,7 @@ jobs:
           git pull origin main
           sudo chown -R ubuntu:ubuntu .
           sudo usermod -aG docker ubuntu
-          docker-compose down
+          docker-compose down -v
           docker system prune -f
           docker-compose up -d --build
         "
