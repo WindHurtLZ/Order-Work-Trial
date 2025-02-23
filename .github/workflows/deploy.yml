@@ -57,8 +57,10 @@ jobs:
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} "
-          cd trading-platform
+          cd Order-Work-Trial
           git pull origin main
+          sudo chown -R ubuntu:ubuntu .
+          sudo usermod -aG docker ubuntu
           docker-compose down
           docker system prune -f
           docker-compose up -d --build
