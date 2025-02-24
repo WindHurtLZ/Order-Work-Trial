@@ -1,10 +1,11 @@
+import asyncio
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, field_validator
-from app.database.database import get_db
-from app.database.models import Order
+from app.database.database import get_db, SessionLocal
+from app.models.models import Order
 from app.enums import OrderStatus
 from app.api.websockets import manager, get_orders_json
 
@@ -31,7 +32,7 @@ class OrderCreate(BaseModel):
 
 
 @router.post("/orders", status_code=201)
-async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
+async def create_order(order: OrderCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     if order.price <= 0 or order.quantity <= 0:
         raise HTTPException(
             status_code=400,
@@ -55,6 +56,8 @@ async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
         updated_orders = await get_orders_json(db)
         await manager.broadcast(json.dumps(updated_orders))
 
+        background_tasks.add_task(simulate_execution, db_order.id)
+
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -67,7 +70,6 @@ async def create_order(order: OrderCreate, db: Session = Depends(get_db)):
         "status": db_order.status.value,
         "created_at": db_order.created_at.isoformat()
     }
-
 
 @router.get("/orders")
 async def get_orders(
@@ -83,3 +85,24 @@ async def get_orders(
         query = query.filter(Order.status == status)
 
     return query.order_by(Order.created_at.desc()).all()
+
+
+# update to executed 3s after placed order
+async def simulate_execution(order_id: int):
+    await asyncio.sleep(3)
+    db = SessionLocal()
+
+    try:
+        order = db.query(Order).filter(Order.id == order_id).first()
+        if not order:
+            return
+
+        order.status = OrderStatus.EXECUTED
+        db.commit()
+        db.refresh(order)
+
+        # broadcast
+        updated_orders = await get_orders_json(db)
+        await manager.broadcast(json.dumps(updated_orders))
+    finally:
+        db.close()
