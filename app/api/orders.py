@@ -4,8 +4,6 @@ import json
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, field_validator
-from starlette.background import BackgroundTask
-
 from app.database.database import get_db, SessionLocal
 from app.models.models import Order
 from app.enums import OrderStatus
@@ -34,7 +32,7 @@ class OrderCreate(BaseModel):
 
 
 @router.post("/orders", status_code=201)
-async def create_order(order: OrderCreate, db: Session = Depends(get_db), background_tasks: BackgroundTasks = Depends()):
+async def create_order(order: OrderCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     if order.price <= 0 or order.quantity <= 0:
         raise HTTPException(
             status_code=400,
