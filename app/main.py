@@ -20,7 +20,8 @@ app = FastAPI(
     title="Trading Platform API",
     description="Real-time Trading System with WebSocket Support",
     version="0.1.0",
-    openapi_url="/api/openapi.json"
+    openapi_url="/api/openapi.json",
+    lifespan = lifespan
 )
 
 # CORS Config
