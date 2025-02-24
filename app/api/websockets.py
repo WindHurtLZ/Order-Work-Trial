@@ -1,9 +1,8 @@
-import json
 import asyncio
 from fastapi import APIRouter, WebSocket
 from sqlalchemy.orm import Session
 from app.database.database import get_db
-from app.database.models import Order
+from app.models.models import Order
 
 router = APIRouter()
 

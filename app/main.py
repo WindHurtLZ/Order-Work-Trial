@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import orders, websockets
 from app.database.database import engine
-from app.database.models import Base
+from app.models.models import Base
 from fastapi.templating import Jinja2Templates
 
 
